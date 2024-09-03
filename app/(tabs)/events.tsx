@@ -18,71 +18,74 @@ function Screen() {
   const [refreshing, setRefreshing] = React.useState(false);
 
   async function getEvents() {
-    setRefreshing(true);
+    console.log("START REFRESH");
     const { data } = await supabase
       .from("events")
       .select("*")
       .order("start_date", { ascending: true });
-
-    setEvents(data as EventType[]);
-    setRefreshing(false);
+    await new Promise((r) => setTimeout(r, 1000));
+    console.log("END REFRESH");
+    return data as EventType[];
   }
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    getEvents();
+    const eventsData = await getEvents();
+    setEvents(eventsData);
     setRefreshing(false);
   }, []);
 
   useEffect(() => {
-    getEvents();
+    async function loadData() {
+      setRefreshing(true);
+      const eventsData = await getEvents();
+      setEvents(eventsData);
+      setRefreshing(false);
+    }
+
+    loadData();
   }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={styles.container}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View style={styles.header}>
-          <Text style={styles.beforeTitle}>Todos los eventos en:</Text>
-          <Text style={styles.title}>Guayaquil</Text>
-          <Text style={styles.subTitleComment}>
-            {refreshing ? (
-              "Cargando..."
-            ) : (
-              <>
-                Actualizado el{" "}
-                {new Date(events?.[0]?.last_updated || "").toLocaleDateString(
-                  "es-EC",
-                  {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  }
+      <View style={styles.container}>
+        <FlatList
+          ListHeaderComponent={
+            <View style={styles.header}>
+              <Text style={styles.beforeTitle}>Todos los eventos en:</Text>
+              <Text style={styles.title}>Guayaquil</Text>
+              <Text style={styles.subTitleComment}>
+                {refreshing ? (
+                  "Cargando..."
+                ) : (
+                  <>
+                    Actualizado el{" "}
+                    {new Date(
+                      events?.[0]?.last_updated || ""
+                    ).toLocaleDateString("es-EC", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })}
+                  </>
                 )}
-              </>
-            )}
-          </Text>
-        </View>
-        <View style={styles.section}>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            refreshing
-            data={events}
-            style={styles.eventsList}
-            renderItem={({ item }) => <EventItem event={item} fullWidth />}
-            keyExtractor={(item) => item.slug}
-            contentContainerStyle={{ gap: 16 }}
-          />
-        </View>
-      </ScrollView>
+              </Text>
+            </View>
+          }
+          style={styles.list}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          data={events}
+          renderItem={({ item }) => <EventItem event={item} fullWidth />}
+          keyExtractor={(item) => item.slug}
+          contentContainerStyle={{ gap: 16 }}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -93,11 +96,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white", // O el color que prefieras
   },
   container: {
-    paddingTop: 30,
+    paddingTop: 15,
     marginHorizontal: 20,
   },
   header: {
-    marginBottom: 16,
+    marginBottom: 0,
+  },
+  list: {
+    paddingTop: 16,
   },
   beforeTitle: {
     fontSize: 14,
@@ -112,7 +118,6 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
   },
-  section: {},
   subTitle: {
     fontSize: 20,
     lineHeight: 28,
@@ -126,7 +131,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 16,
   },
-  eventsList: {},
 });
 
 export default Screen;
