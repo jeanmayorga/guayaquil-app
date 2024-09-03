@@ -67,6 +67,7 @@ function Screen() {
         </View>
         <View style={styles.section}>
           <FlatList
+            showsVerticalScrollIndicator={false}
             refreshing
             data={events}
             style={styles.eventsList}

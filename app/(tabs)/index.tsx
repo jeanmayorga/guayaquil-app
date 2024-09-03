@@ -55,6 +55,7 @@ function Screen() {
             )}
           </Text>
           <FlatList
+            showsHorizontalScrollIndicator={false}
             horizontal
             data={events}
             style={styles.eventsList}
