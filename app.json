@@ -46,6 +46,7 @@
     "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/f42285ef-afbb-4f1e-9826-e2e5633c53a5"
-    }
+    },
+    "owner": "paulmayorga"
   }
 }
