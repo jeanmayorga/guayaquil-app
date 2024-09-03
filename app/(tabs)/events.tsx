@@ -48,44 +48,45 @@ function Screen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <FlatList
-          ListHeaderComponent={
-            <View style={styles.header}>
-              <Text style={styles.beforeTitle}>Todos los eventos en:</Text>
-              <Text style={styles.title}>Guayaquil</Text>
-              <Text style={styles.subTitleComment}>
-                {refreshing ? (
-                  "Cargando..."
-                ) : (
-                  <>
-                    Actualizado el{" "}
-                    {new Date(
-                      events?.[0]?.last_updated || ""
-                    ).toLocaleDateString("es-EC", {
+      <FlatList
+        style={styles.container}
+        stickyHeaderHiddenOnScroll
+        stickyHeaderIndices={[0]}
+        ListHeaderComponent={
+          <View style={styles.header}>
+            <Text style={styles.beforeTitle}>Todos los eventos en:</Text>
+            <Text style={styles.title}>Guayaquil</Text>
+            <Text style={styles.subTitleComment}>
+              {refreshing ? (
+                "Cargando..."
+              ) : (
+                <>
+                  Actualizado el{" "}
+                  {new Date(events?.[0]?.last_updated || "").toLocaleDateString(
+                    "es-EC",
+                    {
                       day: "2-digit",
                       month: "long",
                       year: "numeric",
                       hour: "2-digit",
                       minute: "2-digit",
                       hour12: false,
-                    })}
-                  </>
-                )}
-              </Text>
-            </View>
-          }
-          style={styles.list}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          data={events}
-          renderItem={({ item }) => <EventItem event={item} fullWidth />}
-          keyExtractor={(item) => item.slug}
-          contentContainerStyle={{ gap: 16 }}
-        />
-      </View>
+                    }
+                  )}
+                </>
+              )}
+            </Text>
+          </View>
+        }
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        data={events}
+        renderItem={({ item }) => <EventItem event={item} fullWidth />}
+        keyExtractor={(item) => item.slug}
+        contentContainerStyle={{ gap: 16 }}
+      />
     </SafeAreaView>
   );
 }
@@ -93,17 +94,18 @@ function Screen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "white", // O el color que prefieras
+    backgroundColor: "white",
   },
   container: {
-    paddingTop: 15,
     marginHorizontal: 20,
   },
   header: {
+    paddingTop: 30,
     marginBottom: 0,
+    backgroundColor: "white",
   },
   list: {
-    paddingTop: 16,
+    // paddingTop: 16,
   },
   beforeTitle: {
     fontSize: 14,
