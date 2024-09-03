@@ -24,7 +24,6 @@ function Screen() {
       setRefreshing(false);
     }, 2000);
   }, []);
-
   useEffect(() => {
     async function getEvents() {
       setIsLoading(true);
@@ -51,17 +50,23 @@ function Screen() {
           <Text style={styles.beforeTitle}>Todos los eventos en:</Text>
           <Text style={styles.title}>Guayaquil</Text>
           <Text style={styles.subTitleComment}>
-            Actualizado el{" "}
-            {new Date(events[0]?.last_updated || "").toLocaleDateString(
-              "es-EC",
-              {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              }
+            {isLoading ? (
+              "Cargando..."
+            ) : (
+              <>
+                Actualizado el{" "}
+                {new Date(events[0]?.last_updated || "").toLocaleDateString(
+                  "es-EC",
+                  {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  }
+                )}
+              </>
             )}
           </Text>
         </View>
