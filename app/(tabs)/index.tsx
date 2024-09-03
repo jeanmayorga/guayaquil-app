@@ -32,7 +32,7 @@ function Screen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text style={styles.beforeTitle}>Busca eventos en:</Text>
           <Text style={styles.title}>Guayaquil</Text>

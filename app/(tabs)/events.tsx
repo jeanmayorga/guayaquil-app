@@ -22,7 +22,6 @@ function Screen() {
     const { data } = await supabase
       .from("events")
       .select("*")
-      .limit(12)
       .order("start_date", { ascending: true });
 
     setEvents(data as EventType[]);
@@ -42,6 +41,7 @@ function Screen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
+        showsVerticalScrollIndicator={false}
         style={styles.container}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
