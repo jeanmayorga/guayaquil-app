@@ -22,7 +22,7 @@ function Screen() {
       const { data } = await supabase
         .from("events")
         .select("*")
-        .limit(12)
+        .limit(6)
         .order("start_date", { ascending: true });
       setEvents(data as EventType[]);
       setIsLoading(false);
@@ -42,7 +42,7 @@ function Screen() {
           <Text style={styles.subTitle}>Eventos en tendencia</Text>
           <Text style={styles.subTitleComment}>
             Actualizado el{" "}
-            {new Date(events[0]?.last_updated || "").toLocaleDateString(
+            {new Date(events?.[0]?.last_updated || "").toLocaleDateString(
               "es-EC",
               {
                 day: "2-digit",
