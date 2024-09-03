@@ -10,11 +10,20 @@ import {
   Text,
   FlatList,
   View,
+  RefreshControl,
 } from "react-native";
 
 function Screen() {
   const [events, setEvents] = useState<EventType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     async function getEvents() {
@@ -32,14 +41,15 @@ function Screen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View style={styles.header}>
-          <Text style={styles.beforeTitle}>Busca eventos en:</Text>
+          <Text style={styles.beforeTitle}>Todos los eventos en:</Text>
           <Text style={styles.title}>Guayaquil</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.subTitle}>Eventos en tendencia</Text>
           <Text style={styles.subTitleComment}>
             Actualizado el{" "}
             {new Date(events[0]?.last_updated || "").toLocaleDateString(
@@ -54,11 +64,13 @@ function Screen() {
               }
             )}
           </Text>
+        </View>
+        <View style={styles.section}>
           <FlatList
-            horizontal
+            refreshing
             data={events}
             style={styles.eventsList}
-            renderItem={({ item }) => <EventItem event={item} />}
+            renderItem={({ item }) => <EventItem event={item} fullWidth />}
             keyExtractor={(item) => item.slug}
             contentContainerStyle={{ gap: 16 }}
           />
@@ -78,7 +90,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   header: {
-    marginBottom: 30,
+    marginBottom: 16,
   },
   beforeTitle: {
     fontSize: 14,
