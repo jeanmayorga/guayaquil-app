@@ -15,28 +15,29 @@ import {
 
 function Screen() {
   const [events, setEvents] = useState<EventType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = React.useState(false);
+
+  async function getEvents() {
+    setRefreshing(true);
+    const { data } = await supabase
+      .from("events")
+      .select("*")
+      .limit(12)
+      .order("start_date", { ascending: true });
+
+    setEvents(data as EventType[]);
+    setRefreshing(false);
+  }
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  }, []);
-  useEffect(() => {
-    async function getEvents() {
-      setIsLoading(true);
-      const { data } = await supabase
-        .from("events")
-        .select("*")
-        .limit(12)
-        .order("start_date", { ascending: true });
-      setEvents(data as EventType[]);
-      setIsLoading(false);
-    }
     getEvents();
-  }, [[]]);
+    setRefreshing(false);
+  }, []);
+
+  useEffect(() => {
+    getEvents();
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -50,12 +51,12 @@ function Screen() {
           <Text style={styles.beforeTitle}>Todos los eventos en:</Text>
           <Text style={styles.title}>Guayaquil</Text>
           <Text style={styles.subTitleComment}>
-            {isLoading ? (
+            {refreshing ? (
               "Cargando..."
             ) : (
               <>
                 Actualizado el{" "}
-                {new Date(events[0]?.last_updated || "").toLocaleDateString(
+                {new Date(events?.[0]?.last_updated || "").toLocaleDateString(
                   "es-EC",
                   {
                     day: "2-digit",
